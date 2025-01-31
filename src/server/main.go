@@ -2,12 +2,10 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
+
+	"github.com/emperorsixpacks/dailbot/server/config"
 )
 
 func main() {
-	if pathStr, err := os.Getwd(); err == nil {
-		fmt.Println(filepath.Dir(pathStr))
-	}
+  fmt.Println(config.GetConfig())
 }
