@@ -1,0 +1,11 @@
+server:
+  name: "DailBot"
+  port: 5000
+  host: "localhost"
+
+api_services:
+  twilio:
+    twilio_ssid: ${TWILIO_SSID}
+    twilio_auth_token: ${TWILIO_AUTH_TOKEN}
+    twilio_phone_numeber: ${TWILIO_PHONE_NUMBER}
+
