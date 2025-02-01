@@ -26,12 +26,14 @@ type (
 		Twilio TwilioSettings `yaml:"twilio"`
 	}
 	TwilioSettings struct {
-		TwilioSSID         string `yaml:"twilio_ssid"`
-		TwilioAuthToken    string `yaml:"twilio_auth_token"`
-		TwilioPhoneNumeber string `yaml:"twilio_phone_number"`
+		SSID         string `yaml:"twilio_ssid"`
+		AuthToken    string `yaml:"twilio_auth_token"`
+		PhoneNumeber string `yaml:"twilio_phone_number"`
 	}
-
-// AirtableSettings struct{}
+	AirtableSettings struct {
+		ClientID     string `yaml:"airtable_client_id"`
+		ClientSecret string `yaml:"airtable_client_secret"`
+	}
 )
 
 func loadEnv() {

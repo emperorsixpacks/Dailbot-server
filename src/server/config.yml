@@ -8,4 +8,7 @@ api_services:
     twilio_ssid: ${TWILIO_SSID}
     twilio_auth_token: ${TWILIO_AUTH_TOKEN}
     twilio_phone_number: ${TWILIO_PHONE_NUMBER}
+  airtable:
+    airtable_client_id: ${AIRTABLE_CLIENT_ID}
+    airtable_client_secret: ${AIRTABLE_CLIENT_SECRET}
 
