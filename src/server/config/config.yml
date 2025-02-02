@@ -1,6 +1,6 @@
 server:
   name: "DailBot"
-  port: "5000"
+  port: ":5000"
   host: "localhost"
 
 api_services:

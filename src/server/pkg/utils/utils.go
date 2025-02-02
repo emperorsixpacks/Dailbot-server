@@ -3,20 +3,10 @@ package config
 import (
 	"errors"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"gopkg.in/yaml.v3"
 )
-
-func GetBasePath() (string, error) {
-	pathStr, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-	return filepath.Dir(filepath.Dir(pathStr)), nil
-
-}
 
 func validMapping(in interface{}) (map[string]interface{}, error) {
 	comma, ok := in.(map[string]interface{})

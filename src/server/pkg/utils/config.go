@@ -4,6 +4,7 @@ import (
 	"path"
 	"sync"
 
+	"github.com/emperorsixpacks/dailbot/utils"
 	"github.com/joho/godotenv"
 )
 
@@ -37,7 +38,7 @@ type (
 )
 
 func loadEnv() {
-	pathStr, err := GetBasePath() // TODO what if we could just thow the error at the upper level
+	pathStr, err := utils.GetBasePath() // TODO what if we could just thow the error at the upper level
 	if err != nil {
 		// TODO raise an error here
 		return
@@ -57,7 +58,7 @@ func loadEnv() {
 }
 
 func GetConfig() AppSettings {
-	pathStr, err := GetBasePath()
+	pathStr, err := utils.GetBasePath()
 	if err != nil {
 		panic(err)
 	}
