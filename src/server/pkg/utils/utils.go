@@ -1,109 +1,82 @@
-package config
+package utils
 
 import (
-	"errors"
-	"os"
-	"strings"
+	"path"
+	"sync"
 
-	"gopkg.in/yaml.v3"
+	"github.com/joho/godotenv"
 )
 
-func validMapping(in interface{}) (map[string]interface{}, error) {
-	comma, ok := in.(map[string]interface{})
-	if !ok {
-		return nil, errors.New("Invalid config")
+var (
+	once         sync.Once
+	app_settings *AppSettings
+)
+
+type (
+	AppSettings struct {
+		Server   ServerSettings     `yaml:"server"`
+		Services APISericesSettings `yaml:"api_services"`
 	}
-	return comma, nil
+	ServerSettings struct {
+		Name string `yaml:"name"`
+		Port string `yaml:"port"`
+		Host string `yaml:"host"`
+	}
+	APISericesSettings struct {
+		Twilio TwilioSettings `yaml:"twilio"`
+	}
+	TwilioSettings struct {
+		SSID         string `yaml:"twilio_ssid"`
+		AuthToken    string `yaml:"twilio_auth_token"`
+		PhoneNumeber string `yaml:"twilio_phone_number"`
+	}
+	AirtableSettings struct {
+		ClientID     string `yaml:"airtable_client_id"`
+		ClientSecret string `yaml:"airtable_client_secret"`
+	}
+)
+
+func loadEnv() {
+	pathStr, err := utils.GetBasePath() // TODO what if we could just thow the error at the upper level
+	if err != nil {
+		// TODO raise an error here
+		return
+	}
+	envPath := path.Join(pathStr, ".env")
+
+	err = validPath(envPath)
+	if err != nil {
+		// TODO raise an error here
+		return
+	}
+	err = godotenv.Load(envPath)
+	if err != nil {
+		// TODO raise the error here
+		return
+	}
 }
 
-func validPath(configPath string) error {
-	_, err := os.Stat(configPath)
-	if !os.IsNotExist(err) {
-		return err
+func GetConfig() AppSettings {
+	pathStr, err := utils.GetBasePath()
+	if err != nil {
+		panic(err)
 	}
-	return nil
-}
+	ymlPath := path.Join(pathStr, "src/server/config.yml")
+	err = validPath(ymlPath) // TODO would it not be nice if we could just pass this as a slice
 
-func LoadConfig(filepath string, o interface{}) error {
-	ymlBytes, err := loadConfig(filepath)
 	if err != nil {
-		return err
-	}
-	err = yaml.Unmarshal(ymlBytes, o)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+		// TODO raise an error here
+		panic(err)
 
-func loadConfig(filePath string) ([]byte, error) {
-	file, err := os.ReadFile(filePath)
-	if err != nil {
-		return nil, err
 	}
-	config, err := ymltoMap(file)
-	if err != nil {
-		return nil, err
-	}
-	newConfig, err := yaml.Marshal(config)
-	if err != nil {
-		return nil, err
-	}
-	return newConfig, nil
-}
-
-func ymltoMap(file []byte) (interface{}, error) {
-	var config interface{}
-	err := yaml.Unmarshal(file, &config)
-	if err != nil {
-		return nil, err
-	}
-	err = resolveConfig(&config)
-	if err != nil {
-		return nil, err
-	}
-	return config, nil
-}
-
-// TODO why don't we just pass the variable around without the pointer
-func resolveConfig(config *interface{}) error {
-	MapConfig, err := validMapping((*config))
-	if err != nil {
-		return err
-	}
-	for k, v := range MapConfig {
-		if MapConfig[k], err = resolveConfigVars(v); err != nil {
-			return err
+	once.Do(func() {
+		loadEnv()
+		if app_settings == nil {
+			err := LoadConfig(ymlPath, &app_settings)
+			if err != nil {
+				panic(err)
+			}
 		}
-	}
-
-	return nil
-}
-
-// TODO accept any val of any type, currently only works with str
-func resolveConfigVars(config interface{}) (interface{}, error) {
-	MapConfig, err := validMapping(config)
-	if err != nil {
-		return nil, err
-	}
-	for k, v := range MapConfig {
-		if str, ok := v.(string); ok {
-			MapConfig[k] = resolvePlaceHolder(str)
-			continue
-		}
-		if MapConfig[k], err = resolveConfigVars(v); err != nil {
-			return nil, err
-		}
-	}
-	return config, nil // MapConfig is a reference to config
-}
-
-func resolvePlaceHolder(value string) string {
-	if strings.Contains(value, "${") {
-		last_index := len(value) - 1
-		first_index := 2
-		env_value := value[first_index:last_index]
-		return os.Getenv(env_value)
-	}
-	return value
+	})
+	return *app_settings
 }

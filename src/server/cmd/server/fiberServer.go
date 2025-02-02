@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"path"
 
-	"github.com/emperorsixpacks/dailbot/config"
-	"github.com/emperorsixpacks/dailbot/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 )
@@ -29,7 +27,7 @@ type fiberServer struct {
 func (f *fiberServer) Start() {
 
 	if err := f.app.Listen(f.appConfig.Server.Port); err != nil {
-    fmt.Println(err)
+		fmt.Println(err)
 		// TODO log error
 		return
 	}
