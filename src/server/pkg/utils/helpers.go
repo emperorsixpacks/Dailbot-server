@@ -1,13 +1,35 @@
-package utils 
+package utils
 
 import (
 	"errors"
 	"os"
+	"path"
 	"strings"
 
+	"github.com/joho/godotenv"
 	"gopkg.in/yaml.v3"
 )
 
+//TODO add env path
+func loadEnv() {
+	pathStr, err := GetBasePath() // TODO what if we could just thow the error at the upper level
+	if err != nil {
+		// TODO raise an error here
+		return
+	}
+	envPath := path.Join(pathStr, ".env")
+
+	err = validPath(envPath)
+	if err != nil {
+		// TODO raise an error here
+		return
+	}
+	err = godotenv.Load(envPath)
+	if err != nil {
+		// TODO raise the error here
+		return
+	}
+}
 func validMapping(in interface{}) (map[string]interface{}, error) {
 	comma, ok := in.(map[string]interface{})
 	if !ok {
@@ -19,18 +41,6 @@ func validMapping(in interface{}) (map[string]interface{}, error) {
 func validPath(configPath string) error {
 	_, err := os.Stat(configPath)
 	if !os.IsNotExist(err) {
-		return err
-	}
-	return nil
-}
-
-func LoadConfig(filepath string, o interface{}) error {
-	ymlBytes, err := loadConfig(filepath)
-	if err != nil {
-		return err
-	}
-	err = yaml.Unmarshal(ymlBytes, o)
-	if err != nil {
 		return err
 	}
 	return nil

@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"path"
 
+	"github.com/emperorsixpacks/dailbot/pkg/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 )
 
-func NewFiberServer(appConfig config.AppSettings) *fiberServer {
+// TODO pass the template file dir directly from the appsettings, also look into cdns for prod
+func NewFiberServer(appConfig utils.AppSettings) *fiberServer {
 	basePath, _ := utils.GetBasePath()
+  fmt.Println(basePath)
 	templesDir := path.Join(basePath, "public/pages")
 	templateEngine := html.New(templesDir, ".html")
 	app := fiber.New(fiber.Config{
@@ -19,7 +22,7 @@ func NewFiberServer(appConfig config.AppSettings) *fiberServer {
 }
 
 type fiberServer struct {
-	appConfig config.AppSettings
+	appConfig utils.AppSettings
 	app       *fiber.App
 }
 

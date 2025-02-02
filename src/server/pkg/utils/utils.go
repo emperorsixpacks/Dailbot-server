@@ -1,10 +1,12 @@
 package utils
 
 import (
+	"errors"
 	"path"
+	"runtime"
 	"sync"
 
-	"github.com/joho/godotenv"
+	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -14,8 +16,10 @@ var (
 
 type (
 	AppSettings struct {
-		Server   ServerSettings     `yaml:"server"`
-		Services APISericesSettings `yaml:"api_services"`
+		Server      ServerSettings     `yaml:"server"`
+		Services    APISericesSettings `yaml:"api_services"`
+		TemplateDir string             `yaml:"templates_dir"`
+		StaticDir   string             `yaml:"static_dir"`
 	}
 	ServerSettings struct {
 		Name string `yaml:"name"`
@@ -36,32 +40,32 @@ type (
 	}
 )
 
-func loadEnv() {
-	pathStr, err := utils.GetBasePath() // TODO what if we could just thow the error at the upper level
-	if err != nil {
-		// TODO raise an error here
-		return
+func GetBasePath() (string, error) {
+	_, basePath, _, ok := runtime.Caller(0)
+	if !ok {
+		return "", errors.New("Could not get file path")
 	}
-	envPath := path.Join(pathStr, ".env")
+	return path.Dir(path.Dir(path.Dir(path.Dir(path.Dir(basePath))))), nil
+}
 
-	err = validPath(envPath)
+func LoadConfig(filepath string, o interface{}) error {
+	ymlBytes, err := loadConfig(filepath)
 	if err != nil {
-		// TODO raise an error here
-		return
+		return err
 	}
-	err = godotenv.Load(envPath)
+	err = yaml.Unmarshal(ymlBytes, o)
 	if err != nil {
-		// TODO raise the error here
-		return
+		return err
 	}
+	return nil
 }
 
 func GetConfig() AppSettings {
-	pathStr, err := utils.GetBasePath()
+	pathStr, err := GetBasePath()
 	if err != nil {
 		panic(err)
 	}
-	ymlPath := path.Join(pathStr, "src/server/config.yml")
+	ymlPath := path.Join(pathStr, "src/server/config/config.yml")
 	err = validPath(ymlPath) // TODO would it not be nice if we could just pass this as a slice
 
 	if err != nil {
