@@ -1,12 +1,12 @@
-package handlers
+package goFiberHanders
 
 import (
-	"github.com/emperorsixpacks/dailbot/config"
+	"github.com/emperorsixpacks/dailbot/pkg/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
 type webHookHandler struct {
-	appConfig config.AppSettings
+	appConfig utils.AppSettings
 }
 
 func (w *webHookHandler) Handle() *fiber.App {
@@ -15,7 +15,7 @@ func (w *webHookHandler) Handle() *fiber.App {
 	return router
 }
 
-func WebHookHandler(appConfig config.AppSettings) *webHookHandler {
+func WebHookHandler(appConfig utils.AppSettings) *webHookHandler {
 	return &webHookHandler{appConfig}
 }
 

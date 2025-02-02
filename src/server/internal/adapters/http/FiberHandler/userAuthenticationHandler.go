@@ -1,4 +1,4 @@
-package handlers
+package goFiberHanders 
 
 import (
 	"github.com/emperorsixpacks/dailbot/pkg/utils"
