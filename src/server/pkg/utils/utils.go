@@ -24,10 +24,11 @@ var (
 
 type (
 	AppSettings struct {
-		Server      ServerSettings     `yaml:"server"`
-		Services    APISericesSettings `yaml:"api_services"`
-		TemplateDir string             `yaml:"templates_dir"`
-		StaticDir   string             `yaml:"static_dir"`
+		Server      ServerSettings      `yaml:"server"`
+		Services    APISericesSettings  `yaml:"api_services"`
+		DB          PersistenceSettings `yaml:"persistence"`
+		TemplateDir string              `yaml:"templates_dir"`
+		StaticDir   string              `yaml:"static_dir"`
 	}
 	ServerSettings struct {
 		Name string `yaml:"name"`
@@ -46,6 +47,18 @@ type (
 	AirtableSettings struct {
 		ClientID     string `yaml:"airtable_client_id"`
 		ClientSecret string `yaml:"airtable_client_secret"`
+	}
+	DBSettings struct {
+		Host          string `yaml:"host"`
+		Port          string `yaml:"port"`
+		ConnectionUrl string `yaml:"connection_url"`
+		UserName      string `yaml:"db_username"`
+		Password      string `yaml:"password"`
+		DB            string `yaml:"db"` // NOTE for Redis connection
+	}
+
+	PersistenceSettings struct {
+		PostgresQl DBSettings `yaml:"potgres"`
 	}
 )
 
