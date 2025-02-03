@@ -1,16 +1,9 @@
 package airtable
 
-import (
-	"encoding/json"
-	"fmt"
-
-	"github.com/emperorsixpacks/dailbot/pkg/utils"
-	"github.com/gofiber/fiber/v2"
-)
 
 const (
-	AUTHORISEURL    = "https://airtable.com/oauth2/v1/authorize"
-	TOKENREQUESTURL = "https://airtable.com/oauth2/v1/token"
+	WEBHOOKAUTHORISEURL = "https://api.airtable.com/v0/bases/{baseId}/webhooks"
+	TOKENREQUESTURL     = "https://airtable.com/oauth2/v1/token"
 )
 
 var (
@@ -26,21 +19,23 @@ var (
 	}
 )
 
-func NewAirtableSerice(cfg utils.AirtableSettings) *airtableService {
-	return &airtableService{
-		config: cfg,
-	}
+func NewAirtableSerice(baseID, parsonalToken string) *airtableService {
+	return &airtableService{baseID, parsonalToken}
 }
 
 type airtableService struct {
-	config utils.AirtableSettings
+	baseID        string
+	parsonalToken string
 }
 
-func (this airtableService) Authorise() {
+func (this airtableService) authoriseURL(url) {
+
 }
 
-func (this airtableService) GetAllTables(){}
+func (this airtableService) GetAllTables() {}
 
-func (this airtableService) CreateNewWebhookURL(){}
+func (this airtableService) CreateNewWebhookURL() {
 
-func (this airtableService) GetAllRecords(){}
+}
+
+func (this airtableService) GetAllRecords() {}

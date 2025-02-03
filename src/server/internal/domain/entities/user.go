@@ -1,6 +1,8 @@
 package entities
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 )
 
@@ -11,13 +13,18 @@ type User struct {
 	email     string
 }
 
-type BaseUser struct {
-	User
-	password string
+func (u User) FullName() string {
+	return fmt.Sprintf("%v %v", u.firstName, u.lastName)
+}
+
+func (u User) ToJson() interface{}
+
+func (u User) Email() string {
+	return u.email
 }
 
 type UserRepository interface {
-	Createuser(User, string) User
-	GetUser(uuid.UUID) User
+	CreateUser(User, string) User
+	GetUserByID(uuid.UUID) User
 	VerifyPassword(string) bool
 }

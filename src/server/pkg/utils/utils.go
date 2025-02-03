@@ -1,15 +1,19 @@
 package utils
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
 	"errors"
+	"io"
 	"math/big"
 	"path"
 	"runtime"
 	"sync"
 
+	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/yaml.v3"
 )
 
@@ -91,7 +95,7 @@ func GetConfig() AppSettings {
 }
 
 func GenerateRandomString(length int) (string, error) {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._"
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	result := make([]byte, length)
 	for i := range result {
 		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))
@@ -107,4 +111,41 @@ func GenerateRandomString(length int) (string, error) {
 func GenerateCodeChallenge(codeVerifier string) string {
 	hash := sha256.Sum256([]byte(codeVerifier))
 	return base64.RawURLEncoding.EncodeToString(hash[:])
+}
+
+func GenerateSalt() (string, error) {
+	salt := make([]byte, 32)
+	_, err := rand.Read(salt)
+	if err != nil {
+		return "", err
+	}
+	return base64.RawURLEncoding.EncodeToString(salt), nil
+}
+
+func HashSting(s string) (string, error) {
+	hashStr, err := bcrypt.GenerateFromPassword([]byte(s), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashStr), err
+}
+
+func EncryptString(s string, secret []byte) (string, error) {
+	block, err := aes.NewCipher(secret)
+	if err != nil {
+		return "", err
+	}
+
+	nonce := make([]byte, 12)
+	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+		return "", err
+	}
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", err
+	}
+
+	cipherText := aesGCM.Seal(nil, nonce, []byte(s), nil)
+
+	return base64.RawStdEncoding.EncodeToString(append(nonce, cipherText...)), nil
 }
