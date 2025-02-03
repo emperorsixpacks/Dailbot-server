@@ -1,7 +1,11 @@
 package utils
 
 import (
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/base64"
 	"errors"
+	"math/big"
 	"path"
 	"runtime"
 	"sync"
@@ -27,7 +31,8 @@ type (
 		Host string `yaml:"host"`
 	}
 	APISericesSettings struct {
-		Twilio TwilioSettings `yaml:"twilio"`
+		Twilio   TwilioSettings   `yaml:"twilio"`
+		Airtable AirtableSettings `yaml:"airtable"`
 	}
 	TwilioSettings struct {
 		SSID         string `yaml:"twilio_ssid"`
@@ -83,4 +88,23 @@ func GetConfig() AppSettings {
 		}
 	})
 	return *app_settings
+}
+
+func GenerateRandomString(length int) (string, error) {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._"
+	result := make([]byte, length)
+	for i := range result {
+		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))
+		if err != nil {
+			return "", err
+		}
+		result[i] = charset[num.Int64()]
+	}
+	return string(result), nil
+}
+
+// generateCodeChallenge generates the code_challenge from the code_verifier.
+func GenerateCodeChallenge(codeVerifier string) string {
+	hash := sha256.Sum256([]byte(codeVerifier))
+	return base64.RawURLEncoding.EncodeToString(hash[:])
 }

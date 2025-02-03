@@ -6,19 +6,22 @@ import (
 )
 
 type webHookHandler struct {
-	appConfig utils.AppSettings
+	appConfig utils.AirtableSettings
+	app       *fiber.App
 }
 
-func (w *webHookHandler) Handle() *fiber.App {
+func (w *webHookHandler) Handle() *fiber.Router {
 
-	router := fiber.New()
-	return router
+	router := w.app.Group("/webhook")
+	router.Post(":user_webhhok_id")
+	return &router
 }
 
-func WebHookHandler(appConfig utils.AppSettings) *webHookHandler {
-	return &webHookHandler{appConfig}
+func (w *webHookHandler) webhook(ctx *fiber.Ctx) error {
+	webhook_id := ctx.Params("user_webhook_id")
+	// TODO this is our webhook that will listen for events
 }
 
-func handleWebhook(c *fiber.Ctx) error {
-	return nil
+func WebHookHandler(appConfig utils.AirtableSettings, app *fiber.App) *webHookHandler {
+	return &webHookHandler{appConfig, app}
 }

@@ -1,14 +1,16 @@
 package airtable
 
+// NOTE future
 type oAuthSchema struct {
-	client_id           string   `json:"client_id"`
-	redirect_uri        string   `json:"redirect_uri"`
-	response_type       string   `json:"response_type"`
-	scope               []string `json:"scope"`
-	state               string   `json:"state"`
-	codeChallenge       string   `json:"code_challenge"`
-	codeChallengeMethod string   `json:"code_challenge_method"`
+	ClientID            string   `json:"client_id"`
+	Redirect_uri        string   `json:"redirect_uri"`
+	Response_type       string   `json:"response_type"`
+	Scope               []string `json:"scope"`
+	State               string   `json:"state"`
+	CodeChallenge       string   `json:"code_challenge"`
+	CodeChallengeMethod string   `json:"code_challenge_method"`
 }
+//
 
 type oAuthSuccessSchema struct {
 	code                string

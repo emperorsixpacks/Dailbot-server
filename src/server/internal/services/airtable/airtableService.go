@@ -1,7 +1,11 @@
 package airtable
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/emperorsixpacks/dailbot/pkg/utils"
+	"github.com/gofiber/fiber/v2"
 )
 
 const (
@@ -23,7 +27,9 @@ var (
 )
 
 func NewAirtableSerice(cfg utils.AirtableSettings) *airtableService {
-	return nil
+	return &airtableService{
+		config: cfg,
+	}
 }
 
 type airtableService struct {
@@ -31,24 +37,10 @@ type airtableService struct {
 }
 
 func (this airtableService) Authorise() {
-	config := this.config
-	genState, err := utils.GenerateRandomString(32)
-	if err != nil {
-		// TODO we would want to log the error here
-		return
-	}
-	challengeVerifier, err := utils.GenerateRandomString(64)
-	if err != nil {
-		// TODO we would want to log the error here
-		return
-	}
-	requestParameters := oAuthSchema{
-		client_id:           config.ClientID,
-		redirect_uri:        "google.com",
-		response_type:       "code",
-		scope:               scopes,
-		state:               genState,
-		codeChallenge:       challengeVerifier,
-		codeChallengeMethod: "s256",
-	}
 }
+
+func (this airtableService) GetAllTables(){}
+
+func (this airtableService) CreateNewWebhookURL(){}
+
+func (this airtableService) GetAllRecords(){}
