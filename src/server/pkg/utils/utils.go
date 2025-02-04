@@ -55,6 +55,7 @@ type (
 		UserName      string `yaml:"db_username"`
 		Password      string `yaml:"password"`
 		DB            string `yaml:"db"` // NOTE for Redis connection
+		DataBase      string `yaml:"database"`
 	}
 
 	PersistenceSettings struct {

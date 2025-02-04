@@ -17,8 +17,6 @@ func (u User) FullName() string {
 	return fmt.Sprintf("%v %v", u.firstName, u.lastName)
 }
 
-func (u User) ToJson() interface{}
-
 func (u User) Email() string {
 	return u.email
 }

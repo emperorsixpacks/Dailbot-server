@@ -1,8 +1,20 @@
 package entities
 
 import (
+	"github.com/emperorsixpacks/dailbot/internal/infrastructure/models"
 	"github.com/emperorsixpacks/dailbot/pkg/utils"
+	"github.com/google/uuid"
 )
+
+func NewWebHook(webhId, ptn, baseID, webS string, tableIDs []string) *AirtableWebhook {
+	return &AirtableWebhook{
+		webhookID:     webhId,
+		baseID:        baseID,
+		webhookSecret: webS,
+		personalToken: ptn,
+		tableIds:      tableIDs,
+	}
+}
 
 type AirtableWebhook struct {
 	webhookID     string
@@ -13,13 +25,21 @@ type AirtableWebhook struct {
 	webhookSecret string
 }
 
-func (a *AirtableWebhook) SetPToken(token, secret string) error {
-	hashToken, err := utils.EncryptString(token, []byte(secret))
+func (a *AirtableWebhook) NewPToken(token, secret string) error {
+	encryptedToken, err := utils.EncryptString(token, []byte(secret))
 	if err != nil {
 		return err
 	}
-	a.personalToken = hashToken
+	a.personalToken = encryptedToken
 	return nil
 }
 
-// TODO encrypt personal token in db
+func (a *AirtableWebhook) IncrementCursor() {
+	a.cursor += 1
+}
+
+type AirtableWebHookRepository interface {
+	CreateWebhook(*models.WebhookModel)
+	DeletetWebhhook(uuid.UUID) error
+	GetWebhook(uuid.UUID) AirtableWebhook
+}

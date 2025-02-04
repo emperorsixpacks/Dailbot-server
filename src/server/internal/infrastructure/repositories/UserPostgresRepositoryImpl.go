@@ -1,4 +1,4 @@
-package postgres
+package repositories 
 
 func NewPostgresRepository() {
   
