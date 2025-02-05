@@ -1,4 +1,4 @@
-package airtable
+package services
 
 // NOTE future
 type oAuthSchema struct {
@@ -10,6 +10,7 @@ type oAuthSchema struct {
 	CodeChallenge       string   `json:"code_challenge"`
 	CodeChallengeMethod string   `json:"code_challenge_method"`
 }
+
 //
 
 type oAuthSuccessSchema struct {
@@ -23,4 +24,14 @@ type oAuthErroorSchema struct {
 	errorStr         string
 	errorDescription string
 	state            string
+}
+
+type WebHookCreateSchema struct {
+	spec map[string]interface{} `json:"spec"`
+}
+
+type WebHookCreateSchemaReponse struct {
+	expirationTime  string
+	id              string
+	macSecretBase64 string
 }
