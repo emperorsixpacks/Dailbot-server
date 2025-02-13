@@ -18,7 +18,7 @@ func returnServices(config utils.AppSettings) map[string]services.Service {
 func main() {
 	appSettings := utils.GetConfig()
 	logger.NewDefaultLogger()
-  logger.DefaultLogger.Info("Starting server...")
+	logger.DefaultLogger.Info("Starting server...")
 	server := server.NewFiberServer(appSettings, returnServices(appSettings))
 	server.Start()
 }

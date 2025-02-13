@@ -51,7 +51,7 @@ func (f *fiberServer) Start() {
 	goFiberHanders.NewAuthHandler(f.appConfig.Services.Airtable, f.app, f.services).Handle()
 	goFiberHanders.NewIntegrationsHandler(f.appConfig.Services.Airtable, f.app).Handle()
 	logger.DefaultLogger.Info("Done adding handlers")
-	if err := f.app.Listen(fmt.Sprintf(":%d", f.appConfig.Server.Port)); err != nil {
+	if err := f.app.Listen(fmt.Sprintf(":%s", f.appConfig.Server.Port)); err != nil {
 		fmt.Println(err)
 		// TODO log error
 		return
