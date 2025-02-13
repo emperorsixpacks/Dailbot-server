@@ -37,7 +37,7 @@ func NewRedisCache(appConfig utils.DBSettings) (*Redis, error) {
 var ctx = context.Background() // I do not know, should I put this in the struct
 type KeyPath interface{}
 
-func mapToStruct(i interface{}, o *interface{}) error {
+func mapToStruct(i interface{}, o interface{}) error {
 	newStrVal, err := json.Marshal(i)
 	if err != nil {
 		return err
@@ -57,8 +57,7 @@ func returnJSONKey(key KeyPath) (string, error) {
 		return strings.Join(str, "."), nil
 	}
 	// log and crash server
-	message := fmt.Sprintf("Invalid Key:%v", key)
-	return "", errors.New(message)
+	return "", fmt.Errorf("Invalid Key:%v", key)
 
 }
 
@@ -149,6 +148,3 @@ func (this Redis) DeleteJSON(item string, key KeyPath, value interface{}) error 
 	return nil
 }
 
-// this should be private, and later, we should have only getconnection, var, should com from duncan config
-// We can use an interface here something like duncan.cache, but that should be later
-// Fix null pointer error
