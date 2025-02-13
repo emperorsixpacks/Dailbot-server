@@ -10,7 +10,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-//TODO add env path
+// TODO add env path
 func loadEnv() {
 	pathStr, err := GetBasePath() // TODO what if we could just thow the error at the upper level
 	if err != nil {
@@ -97,8 +97,8 @@ func resolveConfigVars(config interface{}) (interface{}, error) {
 		return nil, err
 	}
 	for k, v := range MapConfig {
-		if str, ok := v.(string); ok {
-			MapConfig[k] = resolvePlaceHolder(str)
+		if value, ok := v.(string); ok {
+			MapConfig[k] = resolvePlaceHolder(value)
 			continue
 		}
 		if MapConfig[k], err = resolveConfigVars(v); err != nil {

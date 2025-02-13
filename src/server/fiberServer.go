@@ -47,11 +47,11 @@ type fiberServer struct {
 
 // TODO look into moving temples dir and static files path to appsettings
 func (f *fiberServer) Start() {
-  logger.DefaultLogger.Info("Adding handlers")
+	logger.DefaultLogger.Info("Adding handlers")
 	goFiberHanders.NewAuthHandler(f.appConfig.Services.Airtable, f.app, f.services).Handle()
 	goFiberHanders.NewIntegrationsHandler(f.appConfig.Services.Airtable, f.app).Handle()
-  logger.DefaultLogger.Info("Done adding handlers")
-	if err := f.app.Listen(f.appConfig.Server.Port); err != nil {
+	logger.DefaultLogger.Info("Done adding handlers")
+	if err := f.app.Listen(fmt.Sprintf(":%d", f.appConfig.Server.Port)); err != nil {
 		fmt.Println(err)
 		// TODO log error
 		return

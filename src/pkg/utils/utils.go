@@ -61,6 +61,7 @@ type (
 
 	PersistenceSettings struct {
 		PostgresQl DBSettings `yaml:"potgres"`
+		Redis      DBSettings `yaml:"redis"`
 	}
 )
 

@@ -1,6 +1,6 @@
 server:
   name: "DailBot"
-  port: ":5000"
+  port: "5000"
   host: "localhost"
   public_url: ${PUBLIC_URL}
   auth_callback_url: ${AUTH_CALLBACK_URL}
@@ -13,4 +13,10 @@ api_services:
   airtable:
     airtable_client_id: ${AIRTABLE_CLIENT_ID}
     airtable_client_secret: ${AIRTABLE_CLIENT_SECRET}
+
+persistence:
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    db: "0"
 
