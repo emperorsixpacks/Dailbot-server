@@ -6,6 +6,7 @@ import (
 
 	goFiberHanders "github.com/emperorsixpacks/dailbot/src/internal/adapters/http/FiberHandler"
 	"github.com/emperorsixpacks/dailbot/src/internal/services"
+	"github.com/emperorsixpacks/dailbot/src/pkg/logger"
 	"github.com/emperorsixpacks/dailbot/src/pkg/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
@@ -46,7 +47,10 @@ type fiberServer struct {
 
 // TODO look into moving temples dir and static files path to appsettings
 func (f *fiberServer) Start() {
+  logger.DefaultLogger.Info("Adding handlers")
 	goFiberHanders.NewAuthHandler(f.appConfig.Services.Airtable, f.app, f.services).Handle()
+	goFiberHanders.NewIntegrationsHandler(f.appConfig.Services.Airtable, f.app).Handle()
+  logger.DefaultLogger.Info("Done adding handlers")
 	if err := f.app.Listen(f.appConfig.Server.Port); err != nil {
 		fmt.Println(err)
 		// TODO log error

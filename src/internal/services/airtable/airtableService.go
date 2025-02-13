@@ -24,10 +24,7 @@ var (
 	scopes = []string{
 		"data.records:read",
 		"data.records:write",
-		"data.recordComments:read",
-		"data.recordComments:write",
 		"schema.bases:read",
-		"schema.bases:write",
 		"user.email:read",
 		"webhook:manage",
 	}
@@ -54,11 +51,12 @@ func (this *AirtableService) AuthURL() string {
 	}
 	authConfig := &oauth2.Config{
 		ClientID:    this.appSettings.Services.Airtable.ClientID,
+    ClientSecret: this.appSettings.Services.Airtable.ClientSecret,
 		RedirectURL: this.appSettings.Server.AuthCallbackUrl,
 		Scopes:      scopes,
 		Endpoint:    endpoint,
 	}
-	codeVerifier, err := utils.GenerateRandomString(32)
+	codeVerifier, err := utils.GenerateRandomString(45)
 	if err != nil {
 		panic(err)
 	}

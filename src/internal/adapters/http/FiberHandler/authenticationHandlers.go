@@ -1,6 +1,9 @@
 package goFiberHanders
 
 import (
+	"fmt"
+	"net/url"
+
 	"github.com/emperorsixpacks/dailbot/src/internal/services"
 	"github.com/emperorsixpacks/dailbot/src/pkg/logger"
 	"github.com/emperorsixpacks/dailbot/src/pkg/utils"
@@ -24,7 +27,8 @@ func (a authHandlers) getService(name string) services.Service {
 
 func (a *authHandlers) Handle() *fiber.Router {
 	router := a.app.Group("/auth")
-	router.Get("/auth/:service_name", a.authenticeSerivice)
+	router.Get("/service=:service_name", a.authenticeSerivice)
+	router.Get("/callback", a.callback)
 	return &router
 }
 
@@ -32,15 +36,20 @@ func (a *authHandlers) authenticeSerivice(ctx *fiber.Ctx) error {
 	serviceName := ctx.Params("service_name")
 	service := a.getService(serviceName)
 	if service == nil {
-		// return to error page
+		// return to error previous page with message
 		logger.DefaultLogger.Error("Service not found: %v", serviceName)
 		return nil
 	}
 
-	return ctx.Redirect(service.AuthURL())
+	url, err := url.QueryUnescape(service.AuthURL())
+	if err != nil {
+		return nil
+	}
+	return ctx.Redirect(url)
 }
 
 func (a *authHandlers) callback(ctx *fiber.Ctx) error {
+  fmt.Println(ctx.Queries())
 	return nil
 }
 

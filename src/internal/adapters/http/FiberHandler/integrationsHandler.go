@@ -10,11 +10,11 @@ type servicesHandler struct {
 	app       *fiber.App
 }
 
-func (t *servicesHandler) Handle() fiber.Router {
-	router := t.app.Group("/services")
+func (t *servicesHandler) Handle() *fiber.Router {
+	router := t.app.Group("/integrations")
 	router.Get("/", t.getIntegrations)
 	//	router.Post("/airtable", t.airtableOAuthHandler)
-	return router
+	return &router
 }
 
 func (t *servicesHandler) getIntegrations(ctx *fiber.Ctx) error {
@@ -22,6 +22,6 @@ func (t *servicesHandler) getIntegrations(ctx *fiber.Ctx) error {
 	return ctx.Render("addService", nil)
 }
 
-func AirtableAuthnHandler(appConfig utils.AirtableSettings, app *fiber.App) *servicesHandler {
+func NewIntegrationsHandler(appConfig utils.AirtableSettings, app *fiber.App) *servicesHandler {
 	return &servicesHandler{appConfig, app}
 }
