@@ -5,28 +5,33 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
+	"github.com/emperorsixpacks/dailbot/src/pkg/logger"
 	"github.com/emperorsixpacks/dailbot/src/pkg/utils"
 	"github.com/redis/go-redis/v9"
 )
 
-func NewRedisCache(appConfig utils.DBSettings) *Redis {
-  redisConnAddr := fmt.Sprintf("%s:%s")
+func NewRedisCache(appConfig utils.DBSettings) (*Redis, error) {
+
+	redisConnAddr := fmt.Sprintf("%s:%s", appConfig.Host, appConfig.Port)
+	intDB, err := strconv.Atoi(appConfig.DB)
+	if err != nil {
+		intDB = 0
+	}
 	options := &redis.Options{
-		Addr:     conn.Addr,
-		Password: conn.Password,
-		DB:       conn.GetDBVal(),
+		Addr:     redisConnAddr,
+		Password: appConfig.Password,
+		DB:       intDB,
 	}
 	client := redis.NewClient(options)
-	err := client.Ping(ctx).Err()
+	err = client.Ping(ctx).Err()
 	if err != nil {
-		message := fmt.Sprintf("could not connect on %s \n%v", conn.Addr, err)
-		fmt.Println(message)
+		logger.DefaultLogger.Printf("could not connect on %s \n%v", redisConnAddr, err)
 		return nil, err
 	}
-	newClient.rdb = client
-	return newClient, nil
+	return &Redis{client}, nil
 }
 
 var ctx = context.Background() // I do not know, should I put this in the struct
