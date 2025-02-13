@@ -12,12 +12,12 @@ type servicesHandler struct {
 
 func (t *servicesHandler) Handle() fiber.Router {
 	router := t.app.Group("/services")
-	router.Get("/", t.getAllIntegrations)
+	router.Get("/", t.getIntegrations)
 	//	router.Post("/airtable", t.airtableOAuthHandler)
 	return router
 }
 
-func (t *servicesHandler) getAllIntegrations(ctx *fiber.Ctx) error {
+func (t *servicesHandler) getIntegrations(ctx *fiber.Ctx) error {
 	ctx.Accepts("html")
 	return ctx.Render("addService", nil)
 }

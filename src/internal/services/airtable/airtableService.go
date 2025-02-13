@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	AUTHORIZEURL    = "https://airtable.com/oauth2/v1/authorize"
-	TOKENREQUESTURL = "https://airtable.com/oauth2/v1/token" // NOTE not currently using
+	AUTHORIZEURL     = "https://airtable.com/oauth2/v1/authorize"
+	TOKENREQUESTURL  = "https://airtable.com/oauth2/v1/token" // NOTE not currently using
+	WEBHOOKCREATEURL = "https://api.airtable.com/v0/bases/%s/webhooks"
 )
 
 type mapping map[string]interface{}
@@ -101,7 +102,7 @@ func (this *AirtableService) request(method, url string, pathParams ...string) *
 	agent := fiber.AcquireAgent()
 	req := agent.Request()
 	req.Header.SetMethod(method)
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", this.parsonalToken))
+	//	req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", this.parsonalToken))
 	req.Header.Set("Content-Type", "application/json")
 
 	req.SetRequestURI(reqUrl)
@@ -113,7 +114,7 @@ func (this AirtableService) GetAllTables() {}
 
 func (this AirtableService) CreateNewWebhookURL(baseID string) (webHookCreateSchemaReponse, error) {
 	data := webHookCreateSchema{
-		NotifyUrl: this.appSettings.PublicUrl,
+		NotifyUrl: this.appSettings.Server.PublicUrl,
 		Spec: mapping{
 			"options": mapping{
 				"filters": mapping{
