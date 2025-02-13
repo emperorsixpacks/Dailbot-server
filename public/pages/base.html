@@ -1,0 +1,32 @@
+{{define "base"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/static/style.css"> <!-- Link to your CSS file -->
+</head>
+
+<body class="flex bg-gray-100 text-black">
+  <nav>
+    {{template "sidebar" .}}
+  </nav>
+  <section class="flex-1 flex flex-col">
+    <header>
+      {{template "navbar" .}}
+    </header>
+
+    <main>
+      <section class="mx-8 mt-2">
+        {{block "main" .}}{{end}}
+      </section>
+    </main>
+  </section>
+
+</body>
+
+</html>
+
+{{end}}

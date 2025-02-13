@@ -1,0 +1,54 @@
+{{define "sidebar" }}
+<div class="w-64 min-h-screen bg-[#1a1f37] text-gray-100 p-4">
+  <!-- Logo -->
+  <div class="flex items-center gap-2 mb-8">
+    <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
+      <span class="font-bold">DB</span>
+    </div>
+    <span class="text-lg font-semibold">DialBOT</span>
+  </div>
+
+  <!-- Navigation -->
+  <div class="space-y-4">
+    <!-- Main Menu -->
+    <div class="space-y-1">
+      <div class="menu-title text-xs text-gray-400 uppercase px-2">Main</div>
+      <ul class="menu menu-sm">
+        <li><a class="flex items-center gap-2"><i class="bi bi-grid"></i>Dashboard</a></li>
+        <li><a class="flex items-center gap-2 active"><i class="bi bi-graph-up"></i>Call Analytics</a></li>
+        <li><a class="flex items-center gap-2"><i class="bi bi-bar-chart"></i>Call Metrics</a></li>
+        <li><a class="flex items-center gap-2"><i class="bi bi-file-text"></i>Reports</a></li>
+      </ul>
+    </div>
+
+    <!-- Business Section -->
+    <div class="space-y-1">
+      <div class="menu-title text-xs text-gray-400 uppercase px-2">Business</div>
+      <ul class="menu menu-sm">
+        <li><a class="flex items-center gap-2"><i class="bi bi-people"></i>Team Member</a></li>
+        <li><a class="flex items-center gap-2"><i class="bi bi-person-rolodex"></i>Contacts</a></li>
+        <li><a class="flex items-center gap-2"><i class="bi bi-building"></i>Companies</a></li>
+      </ul>
+    </div>
+
+    <!-- Settings Section -->
+    <div class="space-y-1">
+      <div class="menu-title text-xs text-gray-400 uppercase px-2">Settings</div>
+      <ul class="menu menu-sm">
+        <li><a class="flex items-center gap-2"><i class="bi bi-plug"></i>Integrations</a></li>
+        <li><a class="flex items-center gap-2"><i class="bi bi-credit-card"></i>Billing</a></li>
+        <li><a class="flex items-center gap-2"><i class="bi bi-person-circle"></i>Account</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Collapse Button -->
+  <div class="absolute bottom-4 left-4">
+    <button class="btn btn-ghost btn-sm">
+      <i class="bi bi-chevron-left"></i>
+      <span>Collapse</span>
+    </button>
+  </div>
+</div>
+
+{{end}}

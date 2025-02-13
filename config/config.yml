@@ -1,0 +1,16 @@
+server:
+  name: "DailBot"
+  port: ":5000"
+  host: "localhost"
+  public_url: ${PUBLIC_URL}
+  auth_callback_url: ${AUTH_CALLBACK_URL}
+
+api_services:
+  twilio:
+    twilio_ssid: ${TWILIO_SSID}
+    twilio_auth_token: ${TWILIO_AUTH_TOKEN}
+    twilio_phone_number: ${TWILIO_PHONE_NUMBER}
+  airtable:
+    airtable_client_id: ${AIRTABLE_CLIENT_ID}
+    airtable_client_secret: ${AIRTABLE_CLIENT_SECRET}
+

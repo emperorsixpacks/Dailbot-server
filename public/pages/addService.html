@@ -1,0 +1,50 @@
+{{template "base" . }}
+{{define "main"}}
+<div class=" bg-gray-50 p-8">
+  <!-- Main Container -->
+  <div class="flex gap-8">
+    <div class="flex-1">
+      <div class="mb-8">
+        <h1 class="text-2xl font-semibold">Integrations</h1>
+      </div>
+      <!-- Cards Layout - Changed from grid to flex -->
+      <div class="flex gap-4">
+        <!-- Welcome Card - Fixed width -->
+        <div class="w-[400px] h-52 bg-white rounded-xl p-6 shadow-sm">
+          <h2 class="text-xl font-semibold mb-3">Welcome to Integrations</h2>
+          <p class="text-gray-600 text-sm leading-relaxed mb-6">
+            Simplify integration process and streamline your automated workflows with our integrations tools
+          </p>
+          <div class="flex flex-col gap-2">
+            <span class="text-sm text-blue-600 font-bold hover:underline cursor-pointer">All integrations</span>
+            <span class="text-sm text-blue-600 font-bold hover:underline cursor-pointer">My Integrations</span>
+          </div>
+        </div>
+        <!-- All Integrations Card - Flex grow to take remaining space -->
+        <div class="flex-1 bg-white rounded-xl p-6 shadow-sm">
+          <div class="flex justify-between items-start mb-6">
+            <div>
+              <h3 class="text-lg font-semibold mb-2">All integrations</h3>
+              <p class="text-gray-500 text-sm">Connect your favorite tools</p>
+            </div>
+          </div>
+          <!-- Integration Items Grid -->
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Zendesk Integration -->
+            <div class="flex items-center gap-3 p-3 rounded-lg shadow-sm">
+              <div class="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center">
+                <span class="text-blue-600">Z</span>
+              </div>
+              <div>
+                <h4 class="text-sm font-medium">Zendesk</h4>
+                <p class="text-xs text-gray-500">Get updates about your</p>
+              </div>
+              <button class="ml-auto text-xs text-blue-600 hover:text-blue-700">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
