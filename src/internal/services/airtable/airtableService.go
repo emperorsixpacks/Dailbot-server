@@ -42,7 +42,7 @@ type AirtableService struct {
 	appSettings utils.AppSettings
 }
 
-func (this *AirtableService) ConnectURl() string {
+func (this *AirtableService) AuthURL() string {
 	state, err := utils.GenerateSecret()
 	if err != nil {
 		panic(err)

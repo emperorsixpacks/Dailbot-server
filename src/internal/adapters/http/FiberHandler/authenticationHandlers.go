@@ -1,21 +1,19 @@
 package goFiberHanders
 
 import (
+	"github.com/emperorsixpacks/dailbot/src/internal/services"
+	"github.com/emperorsixpacks/dailbot/src/pkg/logger"
 	"github.com/emperorsixpacks/dailbot/src/pkg/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
-type oauthService interface {
-	ConnectURL() string
-}
-
 type authHandlers struct {
 	appConfig utils.AirtableSettings
 	app       *fiber.App
-	services  map[string]*oauthService
+	services  map[string]services.Service
 }
 
-func (a authHandlers) getService(name string) *oauthService {
+func (a authHandlers) getService(name string) services.Service {
 	for k, v := range a.services {
 		if k == name {
 			return v
@@ -31,14 +29,22 @@ func (a *authHandlers) Handle() *fiber.Router {
 }
 
 func (a *authHandlers) authenticeSerivice(ctx *fiber.Ctx) error {
-	return nil
+	serviceName := ctx.Params("service_name")
+	service := a.getService(serviceName)
+	if service == nil {
+		// return to error page
+		logger.DefaultLogger.Error("Service not found: %v", serviceName)
+		return nil
+	}
+
+	return ctx.Redirect(service.AuthURL())
 }
 
 func (a *authHandlers) callback(ctx *fiber.Ctx) error {
 	return nil
 }
 
-func NewauthHandler(appConfig utils.AirtableSettings, app *fiber.App, service map[string]*oauthService) *authHandlers {
+func NewAuthHandler(appConfig utils.AirtableSettings, app *fiber.App, service map[string]services.Service) *authHandlers {
 	return &authHandlers{appConfig, app, service}
 
 }
