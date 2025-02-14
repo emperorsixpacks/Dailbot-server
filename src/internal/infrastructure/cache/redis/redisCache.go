@@ -13,6 +13,8 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+type KeyPath interface{}
+
 func NewRedisCache(appConfig utils.DBSettings) (*Redis, error) {
 
 	redisConnAddr := fmt.Sprintf("%s:%s", appConfig.Host, appConfig.Port)
@@ -26,16 +28,13 @@ func NewRedisCache(appConfig utils.DBSettings) (*Redis, error) {
 		DB:       intDB,
 	}
 	client := redis.NewClient(options)
-	err = client.Ping(ctx).Err()
+	err = client.Ping(context.Background()).Err()
 	if err != nil {
 		logger.DefaultLogger.Printf("could not connect on %s \n%v", redisConnAddr, err)
 		return nil, err
 	}
 	return &Redis{client}, nil
 }
-
-var ctx = context.Background() // I do not know, should I put this in the struct
-type KeyPath interface{}
 
 func mapToStruct(i interface{}, o interface{}) error {
 	newStrVal, err := json.Marshal(i)
@@ -67,7 +66,7 @@ type Redis struct {
 }
 
 func (this *Redis) clearDB() error {
-	if err := this.rdb.FlushAll(ctx).Err(); err != nil {
+	if err := this.rdb.FlushAll(context.Background()).Err(); err != nil {
 		return err
 	}
 	return nil
@@ -97,7 +96,7 @@ func (this Redis) getJSON(item string, key KeyPath) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	val, err := this.rdb.JSONGet(ctx, item, _key).Expanded()
+	val, err := this.rdb.JSONGet(context.Background(), item, _key).Expanded()
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +124,7 @@ func (this Redis) setJSON(item string, key KeyPath, value interface{}) error {
 	if err != nil {
 		return err
 	}
-	err = this.rdb.JSONSet(ctx, item, _key, val).Err()
+	err = this.rdb.JSONSet(context.Background(), item, _key, val).Err()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -139,7 +138,7 @@ func (this Redis) DeleteJSON(item string, key KeyPath, value interface{}) error 
 	if err != nil {
 		return err
 	}
-	err = this.rdb.JSONDel(ctx, item, _key).Err()
+	err = this.rdb.JSONDel(context.Background(), item, _key).Err()
 	if err != nil {
 		// log error here
 		return err
@@ -147,4 +146,3 @@ func (this Redis) DeleteJSON(item string, key KeyPath, value interface{}) error 
 	// log here
 	return nil
 }
-
