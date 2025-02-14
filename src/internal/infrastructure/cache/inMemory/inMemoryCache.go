@@ -15,8 +15,9 @@ var (
 )
 
 func New() *cache {
+	items := make(map[string]Item)
 	once.Do(func() {
-		defaultCache = &cache{}
+		defaultCache = &cache{items: items}
 	})
 	return defaultCache
 }
@@ -39,7 +40,6 @@ type cache struct {
 }
 
 func (c *cache) Set(key string, value interface{}, duration time.Duration) (int, error) {
-	defer c.mu.Unlock()
 	var d int64
 	if duration == 0 {
 		duration = DefaultDuration
@@ -47,7 +47,7 @@ func (c *cache) Set(key string, value interface{}, duration time.Duration) (int,
 	if duration > 0 {
 		d = time.Now().Add(duration).UnixNano()
 	}
-	c.mu.Lock()
+	c.mu.RLock()
 	c.items[key] = Item{
 		value:    value,
 		duration: d,
@@ -55,13 +55,37 @@ func (c *cache) Set(key string, value interface{}, duration time.Duration) (int,
 	return 0, nil
 }
 func (c *cache) Get(key string) (interface{}, bool) {
-	defer c.mu.Unlock()
-	c.mu.Lock()
+	c.mu.RLock()
 	item, ok := c.items[key]
+	c.mu.RUnlock()
 	if !ok {
 		return nil, false
 	}
 	return item.value, true
 }
 
+func (c *cache) Delete(key string) bool {
+	c.mu.RLock()
+	if _, ok := c.items[key]; !ok {
+		return false
+	}
+	delete(c.items, key)
+	c.mu.RUnlock()
+	return true
+}
+
+func (c *cache) Len() int {
+	c.mu.RLock()
+	n := len(c.items)
+	c.mu.RUnlock()
+	return n
+}
+
+func (c *cache) Flush(){
+  c.mu.RLock()
+  c.items = map[string]Item{}
+  c.mu.Unlock()
+}
+
 // NOTE unix values and thier differrences
+// TODO add increment for int
