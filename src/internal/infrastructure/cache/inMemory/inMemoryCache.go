@@ -35,8 +35,9 @@ func (this Item) Expired() bool {
 }
 
 type cache struct {
-	items map[string]Item
-	mu    sync.RWMutex
+	items   map[string]Item
+	mu      sync.RWMutex
+	janitor *Janitor
 }
 
 func (c *cache) Set(key string, value interface{}, duration time.Duration) (int, error) {
@@ -81,10 +82,42 @@ func (c *cache) Len() int {
 	return n
 }
 
-func (c *cache) Flush(){
-  c.mu.RLock()
-  c.items = map[string]Item{}
-  c.mu.Unlock()
+func (c *cache) Flush() {
+	c.mu.RLock()
+	c.items = map[string]Item{}
+	c.mu.Unlock()
+}
+
+type Janitor struct {
+	interval time.Duration
+	stop     chan bool
+}
+
+func (j *Janitor) Run(c *cache) {
+	ticker := time.NewTicker(j.interval)
+	for {
+		select {
+		case <-ticker.C:
+			// Do something
+		case <-j.stop:
+			ticker.Stop()
+		}
+	}
+}
+
+func stopExceution(c *cache) {
+	c.janitor.stop <- true
+
+}
+
+// TODO we could design this better
+func runJanitor(interval time.Duration, c *cache) {
+	janitor := &Janitor{
+		interval: interval,
+		stop:     make(chan bool),
+	}
+	c.janitor = janitor
+	janitor.Run(c)
 }
 
 // NOTE unix values and thier differrences
