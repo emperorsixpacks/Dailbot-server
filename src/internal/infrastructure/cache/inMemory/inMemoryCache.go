@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	DefaultDuration time.Duration = 2 * time.Minute
+	DefaultDuration time.Duration = 0
 )
 
 var (
@@ -24,6 +24,13 @@ func New() *cache {
 type Item struct {
 	value    interface{}
 	duration int64
+}
+
+func (this Item) Expired() bool {
+	if this.duration == 0 {
+		return false
+	}
+	return time.Now().UnixNano() > this.duration
 }
 
 type cache struct {
