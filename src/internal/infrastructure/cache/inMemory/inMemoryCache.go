@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+const (
+	DefaultDuration time.Duration = 2 * time.Minute
+)
+
 var (
 	once         sync.Once
 	defaultCache *cache
@@ -18,8 +22,8 @@ func New() *cache {
 }
 
 type Item struct {
-	value      interface{}
-	expiration string
+	value    interface{}
+	duration int64
 }
 
 type cache struct {
@@ -29,10 +33,17 @@ type cache struct {
 
 func (c *cache) Set(key string, value interface{}, duration time.Duration) (int, error) {
 	defer c.mu.Unlock()
+	var d int64
+	if duration == 0 {
+		duration = DefaultDuration
+	}
+	if duration > 0 {
+		d = time.Now().Add(duration).UnixNano()
+	}
 	c.mu.Lock()
 	c.items[key] = Item{
-		value:      value,
-		expiration: "hello",
+		value:    value,
+		duration: d,
 	}
 	return 0, nil
 }
@@ -45,3 +56,5 @@ func (c *cache) Get(key string) (interface{}, bool) {
 	}
 	return item.value, true
 }
+
+// NOTE unix values and thier differrences
