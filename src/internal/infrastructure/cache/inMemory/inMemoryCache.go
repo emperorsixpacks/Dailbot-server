@@ -1,6 +1,7 @@
 package inmemoryCache
 
 import (
+	"runtime"
 	"sync"
 	"time"
 )
@@ -19,6 +20,7 @@ func New(cleanUpInterval time.Duration) *cache {
 		items: items,
 	}
 	runJanitor(cleanUpInterval, cache)
+	runtime.SetFinalizer(cache, stopExceution)
 	return cache
 }
 
