@@ -93,12 +93,13 @@ func (c *cache) Flush() {
 }
 
 func (c *cache) DeleteExpired() {
-	c.mu.Lock()
+	c.mu.RLock()
 	for k, v := range c.items {
 		if v.Expired() {
 			c.Delete(k)
 		}
 	}
+	c.mu.RUnlock()
 }
 
 type Janitor struct {
