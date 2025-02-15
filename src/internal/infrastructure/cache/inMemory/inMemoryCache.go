@@ -41,13 +41,13 @@ type cache struct {
 	janitor *Janitor
 }
 
-func (c *cache) Set(key string, value interface{}, duration time.Duration) (int, error) {
+func (c *cache) Set(key string, value interface{}, ttl time.Duration) (int, error) {
 	var d int64
-	if duration == 0 {
-		duration = DefaultDuration
+	if ttl == 0 {
+		ttl = DefaultDuration
 	}
-	if duration > 0 {
-		d = time.Now().Add(duration).UnixNano()
+	if ttl > 0 {
+		d = time.Now().Add(ttl).UnixNano()
 	}
 	c.mu.RLock()
 	c.items[key] = Item{
