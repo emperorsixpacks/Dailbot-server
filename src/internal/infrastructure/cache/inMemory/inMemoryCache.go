@@ -10,8 +10,7 @@ const (
 )
 
 var (
-	once         sync.Once
-	defaultCache *cache
+	once sync.Once
 )
 
 func New(cleanUpInterval time.Duration) *cache {
@@ -20,7 +19,7 @@ func New(cleanUpInterval time.Duration) *cache {
 		items: items,
 	}
 	runJanitor(cleanUpInterval, cache)
-	return defaultCache
+	return cache
 }
 
 type Item struct {
@@ -90,7 +89,7 @@ func (c *cache) Len() int {
 func (c *cache) Flush() {
 	c.mu.RLock()
 	c.items = map[string]Item{}
-	c.mu.Unlock()
+	c.mu.RUnlock()
 }
 
 func (c *cache) DeleteExpired() {
