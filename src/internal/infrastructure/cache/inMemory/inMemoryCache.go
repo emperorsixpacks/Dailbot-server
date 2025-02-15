@@ -14,11 +14,12 @@ var (
 	defaultCache *cache
 )
 
-func New() *cache {
+func New(cleanUpInterval time.Duration) *cache {
 	items := make(map[string]Item)
-	once.Do(func() {
-		defaultCache = &cache{items: items}
-	})
+	cache := &cache{
+		items: items,
+	}
+	runJanitor(cleanUpInterval, cache)
 	return defaultCache
 }
 
@@ -58,10 +59,14 @@ func (c *cache) Set(key string, value interface{}, duration time.Duration) (int,
 func (c *cache) Get(key string) (interface{}, bool) {
 	c.mu.RLock()
 	item, ok := c.items[key]
-	c.mu.RUnlock()
 	if !ok {
 		return nil, false
 	}
+	if item.Expired() {
+		c.mu.RUnlock()
+		return nil, false
+	}
+	c.mu.RUnlock()
 	return item.value, true
 }
 
@@ -88,6 +93,15 @@ func (c *cache) Flush() {
 	c.mu.Unlock()
 }
 
+func (c *cache) DeleteExpired() {
+	c.mu.Lock()
+	for k, v := range c.items {
+		if v.Expired() {
+			c.Delete(k)
+		}
+	}
+}
+
 type Janitor struct {
 	interval time.Duration
 	stop     chan bool
@@ -98,7 +112,7 @@ func (j *Janitor) Run(c *cache) {
 	for {
 		select {
 		case <-ticker.C:
-			// Do something
+			c.DeleteExpired()
 		case <-j.stop:
 			ticker.Stop()
 		}
@@ -117,8 +131,5 @@ func runJanitor(interval time.Duration, c *cache) {
 		stop:     make(chan bool),
 	}
 	c.janitor = janitor
-	janitor.Run(c)
+	go janitor.Run(c)
 }
-
-// NOTE unix values and thier differrences
-// TODO add increment for int
