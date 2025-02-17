@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
+	inmemoryCache "github.com/emperorsixpacks/dailbot/src/internal/infrastructure/cache/inMemory"
 	"github.com/emperorsixpacks/dailbot/src/pkg/logger"
 	"github.com/emperorsixpacks/dailbot/src/pkg/utils"
 	"github.com/gofiber/fiber/v2"
@@ -18,6 +20,8 @@ const (
 )
 
 type mapping map[string]interface{}
+
+var cache = inmemoryCache.GetCache()
 
 // NOTE not currently using
 var (
@@ -50,18 +54,21 @@ func (this *AirtableService) AuthURL() string {
 		TokenURL: TOKENREQUESTURL,
 	}
 	authConfig := &oauth2.Config{
-		ClientID:    this.appSettings.Services.Airtable.ClientID,
-    ClientSecret: this.appSettings.Services.Airtable.ClientSecret,
-		RedirectURL: this.appSettings.Server.AuthCallbackUrl,
-		Scopes:      scopes,
-		Endpoint:    endpoint,
+		ClientID:     this.appSettings.Services.Airtable.ClientID,
+		ClientSecret: this.appSettings.Services.Airtable.ClientSecret,
+		RedirectURL:  this.appSettings.Server.AuthCallbackUrl,
+		Scopes:       scopes,
+		Endpoint:     endpoint,
 	}
 	codeVerifier, err := utils.GenerateRandomString(45)
 	if err != nil {
 		panic(err)
 	}
+	codeChallenge := oauth2.S256ChallengeFromVerifier(codeVerifier)
+	authHash := utils.HashSting(fmt.Sprintf("%s%s", state, codeChallenge))
+	cache.Set(authHash, 0, 2*time.Minute)
 	return authConfig.AuthCodeURL(state,
-		oauth2.SetAuthURLParam("code_challenge", oauth2.S256ChallengeFromVerifier(codeVerifier)),
+		oauth2.SetAuthURLParam("code_challenge", codeChallenge),
 		oauth2.SetAuthURLParam("code_challenge_method", "S256"))
 }
 
