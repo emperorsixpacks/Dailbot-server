@@ -7,21 +7,25 @@ import (
 )
 
 const (
-	DefaultDuration time.Duration = 0
+	DefaultDuration      time.Duration = 0
+	DefaultCacheInterval time.Duration = 2 * time.Minute
 )
 
 var (
-	once sync.Once
+	once         sync.Once
+	defaultCache *cache
 )
 
-func New(cleanUpInterval time.Duration) *cache {
+func GetCache() *cache {
 	items := make(map[string]Item)
-	cache := &cache{
-		items: items,
-	}
-	runJanitor(cleanUpInterval, cache)
-	runtime.SetFinalizer(cache, stopExceution)
-	return cache
+	once.Do(func() {
+		defaultCache = &cache{
+			items: items,
+		}
+		runJanitor(DefaultCacheInterval, defaultCache)
+		runtime.SetFinalizer(defaultCache, stopExceution)
+	})
+	return defaultCache
 }
 
 type Item struct {
@@ -135,3 +139,7 @@ func runJanitor(interval time.Duration, c *cache) {
 	c.janitor = janitor
 	go janitor.Run(c)
 }
+
+// TODO set context for methods why
+// NOTE janitor should be private
+// TODO make it a cache package 

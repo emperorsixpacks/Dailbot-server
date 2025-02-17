@@ -3,5 +3,9 @@ package cache
 type Cache interface {
 	Get(string)
 	Set(string, interface{})
-  SetJson()
+	Delete()
+	Update()
+	Len()
+	Flush()
+	DeleteExpired()
 }

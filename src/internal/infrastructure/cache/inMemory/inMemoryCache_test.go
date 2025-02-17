@@ -7,7 +7,7 @@ import (
 
 // Test Set and Get functionality
 func TestCache_SetAndGet(t *testing.T) {
-	c := New(1 * time.Second)
+	c := GetCache()
 	key := "testKey"
 	value := "testValue"
 
@@ -27,7 +27,7 @@ func TestCache_SetAndGet(t *testing.T) {
 
 // Test expired items
 func TestCache_ExpiredItem(t *testing.T) {
-	c := New(5 * time.Second)
+	c := GetCache()
 
 	key := "tempKey"
 	value := "tempValue"
@@ -47,7 +47,7 @@ func TestCache_ExpiredItem(t *testing.T) {
 
 // Test deleting an item
 func TestCache_Delete(t *testing.T) {
-	c := New(5 * time.Second)
+	c := GetCache()
 	key := "delKey"
 	value := "delValue"
 
@@ -66,7 +66,7 @@ func TestCache_Delete(t *testing.T) {
 
 // Test cache length
 func TestCache_Len(t *testing.T) {
-	c := New(5 * time.Second)
+	c := GetCache()
 	c.Set("key1", "val1", 5*time.Second)
 	c.Set("key2", "val2", 5*time.Second)
 
@@ -77,7 +77,7 @@ func TestCache_Len(t *testing.T) {
 
 // Test flushing the cache
 func TestCache_Flush(t *testing.T) {
-	c := New(5 * time.Second)
+	c := GetCache()
 	c.Set("key1", "val1", 5*time.Second)
 	c.Set("key2", "val2", 5*time.Second)
 
@@ -90,7 +90,7 @@ func TestCache_Flush(t *testing.T) {
 
 // Test deleting expired items
 func TestCache_DeleteExpired(t *testing.T) {
-	c := New(1 * time.Second)
+	c := GetCache()
 	c.Set("key1", "val1", 2*time.Second)  // Will expire quickly
 	c.Set("key2", "val2", 10*time.Second) // Won't expire
 	time.Sleep(3 * time.Second)           // Wait for key1 to expire
